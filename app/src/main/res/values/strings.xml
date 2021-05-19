@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">NanoBios Lab - LFA Reader</string>
+    <string name="test_name_label">Test Name</string>
+    <string name="patient_name_label">Patient Name</string>
+    <string name="patient_id_label">Patient ID</string>
+    <string name="sample_id_label">Sample ID</string>
+</resources>
