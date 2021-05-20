@@ -80,5 +80,9 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("fileName", fileName);
         startActivity(intent);
     }
+
+    public void startImageProcessing (String imagePath) {
+        Log.i("startImageProcessingTag", "From main activity"+imagePath);
+    }
     
 }

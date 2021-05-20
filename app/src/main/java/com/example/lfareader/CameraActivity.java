@@ -55,8 +55,6 @@ public class CameraActivity extends AppCompatActivity implements TextureView.Sur
     private ImageView mViewFinder;
     private Image capturedImage;
     private byte[] finalBytes;
-    private byte[] bytesToSend;
-    private Bitmap imageBitmap;
     private CameraDevice mCameraDevice;
     private String cameraId;
     private CameraCaptureSession mCameraCaptureSession;
@@ -123,6 +121,8 @@ public class CameraActivity extends AppCompatActivity implements TextureView.Sur
         OutputStream output = null;
         output = new FileOutputStream(file);
         output.write(bytes);
+        MainActivity instance = new MainActivity();
+        instance.startImageProcessing(finalImageName);
     }
 
     @SuppressLint("RestrictedApi")
@@ -137,7 +137,7 @@ public class CameraActivity extends AppCompatActivity implements TextureView.Sur
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
         String dateTime = sdf.format(Calendar.getInstance().getTime());
         String ImageName = imageName+"_"+dateTime+".jpeg";
-        File imageDir = new File(getFilesDir(),"/");
+        File imageDir = new File(getFilesDir(),"/Test Images");
         if(!imageDir.exists()){
             imageDir.mkdirs();
         }
@@ -207,8 +207,6 @@ public class CameraActivity extends AppCompatActivity implements TextureView.Sur
             captureBuilder.set(CaptureRequest.JPEG_QUALITY, quality);
             int rotation = getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, Orientations.get(rotation));
-//            final File file = createFile();
-
             ImageReader.OnImageAvailableListener readerlistener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader imageReader) {
@@ -219,12 +217,6 @@ public class CameraActivity extends AppCompatActivity implements TextureView.Sur
                         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                         finalBytes = new byte[buffer.capacity()];
                         buffer.get(finalBytes);
-
-//                        imageBitmap = BitmapFactory.decodeByteArray(finalBytes, 0, finalBytes.length);
-//                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//                        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-//                        bytesToSend = stream.toByteArray();
-
                     }
                     finally {
                         if(image!=null){
@@ -232,19 +224,6 @@ public class CameraActivity extends AppCompatActivity implements TextureView.Sur
                         }
                     }
                 }
-
-//                private void save(byte[] bytes) throws IOException{
-//                    OutputStream output = null;
-//                    try{
-//                        output = new FileOutputStream(file);
-//                        output.write(bytes);
-//                    }
-//                    finally {
-//                        if(null!=output){
-//                            output.close();
-//                        }
-//                    }
-//                }
             };
             reader.setOnImageAvailableListener(readerlistener, mHandler);
 
@@ -253,8 +232,6 @@ public class CameraActivity extends AppCompatActivity implements TextureView.Sur
                 @Override
                 public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
                     super.onCaptureCompleted(session, request, result);
-//                    Toast.makeText(getApplicationContext(),"Saved: "+file,Toast.LENGTH_SHORT).show();
-//                    createCameraPreview();
                     captureButton.setVisibility(View.GONE);
                     saveImageButton.setVisibility(View.VISIBLE);
                     discardImageButton.setVisibility(View.VISIBLE);
@@ -295,17 +272,6 @@ public class CameraActivity extends AppCompatActivity implements TextureView.Sur
                 return;
             }
             manager.openCamera(cameraId, stateCallback, null);
-
-//            mCaptureRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-//            mCaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
-
-
-//            Camera cam = Camera.open();
-//            Camera.Parameters p = cam.getParameters();
-//            p.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
-//            cam.setParameters(p);
-
-
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -321,13 +287,6 @@ public class CameraActivity extends AppCompatActivity implements TextureView.Sur
             Log.d(TAG, "createCameraPreview: camera settings");
             mCaptureRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             mCaptureRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_TORCH);
-//            mCaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,CameraMetadata.CONTROL_AE_PRECAPTURE_TRIGGER_START);
-//            mCaptureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-//            mCaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
-
-//            mCaptureRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_ABERRATION_MODE, CaptureRequest.COLOR_CORRECTION_ABERRATION_MODE_HIGH_QUALITY);
-//            mCaptureRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_AUTO);
-
             mCaptureRequestBuilder.addTarget(surface);
             mCameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
                 @Override
