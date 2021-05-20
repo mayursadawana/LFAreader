@@ -4,4 +4,7 @@
     <string name="patient_name_label">Patient Name</string>
     <string name="patient_id_label">Patient ID</string>
     <string name="sample_id_label">Sample ID</string>
+    <string name="captureImage_label">TODO</string>
+    <string name="saveImageBtn_label">TODO</string>
+    <string name="discardImageBtn_label">TODO</string>
 </resources>
